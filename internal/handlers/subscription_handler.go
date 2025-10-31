@@ -7,10 +7,11 @@ import (
 	"awesomeProject1/pkg/logger"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 type SubscriptionHandler struct {

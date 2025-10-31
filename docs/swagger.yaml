@@ -1,0 +1,318 @@
+basePath: /api/v1
+definitions:
+  dto.CreateSubscriptionRequest:
+    properties:
+      end_date:
+        example: 12-2025
+        type: string
+      price:
+        example: 400
+        type: integer
+      service_name:
+        example: Yandex Plus
+        type: string
+      start_date:
+        description: Формат MM-YYYY
+        example: 01-2025
+        type: string
+      user_id:
+        example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
+        type: string
+    type: object
+  dto.SubscriptionListResponse:
+    properties:
+      limit:
+        example: 10
+        type: integer
+      offset:
+        example: 0
+        type: integer
+      subscriptions:
+        items:
+          $ref: '#/definitions/dto.SubscriptionResponse'
+        type: array
+      total:
+        example: 100
+        type: integer
+    type: object
+  dto.SubscriptionResponse:
+    properties:
+      created_at:
+        example: "2025-10-28T10:00:00Z"
+        type: string
+      end_date:
+        example: 12-2025
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      price:
+        example: 400
+        type: integer
+      service_name:
+        example: Yandex Plus
+        type: string
+      start_date:
+        description: 'Формат: MM-YYYY'
+        example: 01-2025
+        type: string
+      updated_at:
+        example: "2025-10-28T10:00:00Z"
+        type: string
+      user_id:
+        example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
+        type: string
+    type: object
+  dto.UpdateSubscriptionRequest:
+    properties:
+      end_date:
+        example: 12-2025
+        type: string
+      id:
+        type: string
+      price:
+        example: 400
+        type: integer
+      service_name:
+        example: Yandex Plus
+        type: string
+      start_date:
+        example: 01-2025
+        type: string
+      user_id:
+        example: 60601fee-2bf1-4721-ae6f-7636e79a0cba
+        type: string
+    type: object
+  httpHelpers.ErrorMessage:
+    properties:
+      error:
+        type: string
+      id:
+        type: string
+      status:
+        type: integer
+      success:
+        type: boolean
+      time:
+        type: string
+    type: object
+  httpHelpers.SuccessMessage:
+    properties:
+      data: {}
+      status:
+        type: integer
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+  description: API для управления подписками пользователей.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://example.com/terms/
+  title: Subscription API
+  version: "1.0"
+paths:
+  /subscriptions:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех подписок с пагинацией
+      parameters:
+      - description: Смещение (по умолчанию 0)
+        example: 0
+        in: query
+        name: offset
+        type: integer
+      - description: Лимит записей (по умолчанию 10)
+        example: 10
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SubscriptionListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+      summary: Получить список подписок
+      tags:
+      - subscriptions
+    post:
+      consumes:
+      - application/json
+      description: Создаёт новую подписку для пользователя
+      parameters:
+      - description: Данные для создания подписки
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.SubscriptionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+      summary: Создать подписку
+      tags:
+      - subscriptions
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные подписки (частично или полностью)
+      parameters:
+      - description: Данные для обновления подписки
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+      summary: Обновить подписку
+      tags:
+      - subscriptions
+  /subscriptions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет подписку по её уникальному идентификатору
+      parameters:
+      - description: ID подписки
+        example: '"123e4567-e89b-12d3-a456-426614174000"'
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpHelpers.SuccessMessage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+      summary: Удалить подписку
+      tags:
+      - subscriptions
+    get:
+      consumes:
+      - application/json
+      description: Возвращает данные конкретной подписки по её уникальному идентификатору
+      parameters:
+      - description: ID подписки
+        example: '"123e4567-e89b-12d3-a456-426614174000"'
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SubscriptionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+      summary: Получить подписку по ID
+      tags:
+      - subscriptions
+  /subscriptions/total:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает суммарную стоимость подписок за указанный период с возможностью
+        фильтрации по пользователю и сервису
+      parameters:
+      - description: Дата начала периода (MM-YYYY)
+        example: '"01-2025"'
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: Дата окончания периода (MM-YYYY)
+        example: '"12-2025"'
+        in: query
+        name: end
+        required: true
+        type: string
+      - description: ID пользователя (UUID)
+        example: '"60601fee-2bf1-4721-ae6f-7636e79a0cba"'
+        in: query
+        name: user_id
+        type: string
+      - description: Название сервиса
+        example: '"Yandex Plus"'
+        in: query
+        name: service_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpHelpers.ErrorMessage'
+      summary: Получить общую сумму подписок
+      tags:
+      - subscriptions
+swagger: "2.0"
